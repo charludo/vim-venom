@@ -194,6 +194,32 @@ function M.find_virtualenv()
 	return ''
 end
 
+-- Deactivate current virtual-environment
+function M.deactivate()
+	local bufnr = vim.api.nvim_get_current_buf()
+	local virtual_env = os.getenv('VIRTUAL_ENV') or ''
+
+	-- Clean variables
+	vim.api.nvim_buf_del_var(bufnr, 'virtual_env')
+	vim.fn.setenv('VIRTUAL_ENV', nil)
+
+	-- Restore env PATH
+	if original_path ~= '' then
+		vim.fn.setenv('PATH', original_path)
+		original_path = ''
+	end
+
+	-- INFO: Doesn't change python's sys.path.
+
+	if M.config.echo then
+		M.echo('info', string.format(
+			'Deactivated environment "%s" %s',
+			M.path.basename(virtual_env),
+			virtual_env
+		))
+	end
+end
+
 -- Find project virtual-environment and activate it
 function M.activate()
 	-- disable potentially activated venvs
@@ -269,31 +295,6 @@ function M.activate()
 	end
 end
 
--- Deactivate current virtual-environment
-function M.deactivate()
-	local bufnr = vim.api.nvim_get_current_buf()
-	local virtual_env = os.getenv('VIRTUAL_ENV') or ''
-
-	-- Clean variables
-	vim.api.nvim_buf_del_var(bufnr, 'virtual_env')
-	vim.fn.setenv('VIRTUAL_ENV', nil)
-
-	-- Restore env PATH
-	if original_path ~= '' then
-		vim.fn.setenv('PATH', original_path)
-		original_path = ''
-	end
-
-	-- INFO: Doesn't change python's sys.path.
-
-	if M.config.echo then
-		M.echo('info', string.format(
-			'Deactivated environment "%s" %s',
-			M.path.basename(virtual_env),
-			virtual_env
-		))
-	end
-end
 
 -- Simple display of current activated virtual-env
 function M.statusline()
