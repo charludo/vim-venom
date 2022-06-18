@@ -200,7 +200,7 @@ function M.deactivate()
 	local virtual_env = os.getenv('VIRTUAL_ENV') or ''
 
 	-- Clean variables
-	vim.api.nvim_buf_del_var(bufnr, 'virtual_env')
+	pcall(vim.api.nvim_buf_del_var(bufnr, 'virtual_env'))
 	vim.fn.setenv('VIRTUAL_ENV', nil)
 
 	-- Restore env PATH
