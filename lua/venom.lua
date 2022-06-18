@@ -196,6 +196,8 @@ end
 
 -- Find project virtual-environment and activate it
 function M.activate()
+	-- disable potentially activated venvs
+	M.deactivate()
 	-- Ensure window has a real file.
 	if vim.wo.previewwindow or vim.wo.diff then
 		return false
